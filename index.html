@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>আল হিবাহ ব্লাড নেটওয়ার্ক</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alinur+Bahubrihi&family=Graduate&family=Luckiest+Guy&family=Poppins:wght@400;500;700&family=Hind+Siliguri:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <style>
+        :root{--primary-red:#e53935;--dark-red:#b71c1c;--white:#ffffff;--light-gray:#f5f5f5;--green:#4caf50;--blue:#2196f3;--bg-color:#f5f5f5;--card-bg:#ffffff;--text-color:#333333;--shadow:0 4px 12px rgba(0, 0, 0, 0.1);}
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{background-color:var(--bg-color);color:var(--text-color);line-height:1.6;transition:background-color 0.3s, color 0.3s;}
+        body:lang(bn) { font-family: 'Hind Siliguri', sans-serif; }
+        body:lang(en) { font-family: 'Poppins', sans-serif; }
+        .container{max-width:1200px;margin:0 auto;padding:0 15px;}#login-page{display:flex;justify-content:center;align-items:center;min-height:100vh;background:linear-gradient(135deg, var(--primary-red) 0%, var(--dark-red) 100%);}.login-container{background:var(--card-bg);border-radius:10px;padding:30px;width:90%;max-width:450px;box-shadow:var(--shadow);text-align:center;}.login-logo{margin-bottom:20px;}.login-logo i{font-size:50px;color:var(--primary-red);}.login-logo h1{font-family: 'Luckiest Guy', cursive; color:var(--primary-red);margin-top:10px;font-size:3.2rem;letter-spacing:1px;}.login-logo p{font-family: 'Graduate', cursive; font-size: 1rem; color: #555; margin-top: -5px;}.login-type{display:flex;margin-bottom:20px;border-radius:5px;overflow:hidden;}.login-type-btn{flex:1;padding:10px;text-align:center;background:var(--light-gray);cursor:pointer;border:none;font-size:16px;}.login-type-btn.active{background:var(--primary-red);color:white;}.login-form{display:none;}.login-form.active{display:block;}.login-form input{width:100%;padding:12px 15px;margin-bottom:15px;border:1px solid #ddd;border-radius:5px;font-size:16px;background-color:var(--card-bg);color:var(--text-color);}.login-btn{width:100%;padding:12px;background:var(--primary-red);color:var(--white);border:none;border-radius:5px;font-size:16px;cursor:pointer;transition:background 0.3s;}.login-btn:hover{background:var(--dark-red);}.error-message{color:var(--primary-red);margin-top:10px;text-align:center;display:none;}#main-app{display:none;}header{background-color:var(--primary-red);color:var(--white);padding:10px 0;position:sticky;top:0;z-index:1000;box-shadow:0 2px 10px rgba(0, 0, 0, 0.2);}.header-content{display:flex;justify-content:space-between;align-items:center;}.logo{display:flex;align-items:center;gap:10px;}.logo i{font-size:24px;}.logo h1{font-family: 'Luckiest Guy', cursive; font-size:1.8rem; text-shadow: 1px 1px 2px rgba(0,0,0,0.2);}.header-right{display:flex;align-items:center;gap:20px;}.header-link, #logout-btn, #lang-toggle{background:none;border:none;color:white;font-size:22px;cursor:pointer; text-decoration: none;}main{padding:25px 0 140px;}.section{display:none;}.section.active{display:block;}.section-title{font-size:24px;margin-bottom:20px;color:var(--primary-red);border-bottom:2px solid var(--primary-red);padding-bottom:10px;}footer{background-color:var(--card-bg);color:var(--text-color);text-align:center;position:fixed;bottom:0;width:100%;box-shadow:0 -2px 10px rgba(0,0,0,0.1);z-index:100;}.footer-contact{padding:8px;background-color:var(--primary-red);color:var(--white); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}.contact-link{color:var(--white);font-weight:bold;text-decoration:none;}.contact-link:hover{text-decoration:underline;}.bottom-nav{display:flex;justify-content:space-around;}.nav-icon{display:flex;flex-direction:column;align-items:center;cursor:pointer;padding:10px;color:#888;flex:1;position:relative;}.nav-icon i{font-size:22px;}.nav-icon span{font-size:12px;}.nav-icon.active{color:var(--primary-red);}.nav-icon .notification-badge{position:absolute;top:5px;right:calc(50% - 25px);background-color:var(--green);color:white;border-radius:50%;width:18px;height:18px;font-size:12px;display:flex;justify-content:center;align-items:center;}.form-container{background:var(--card-bg);padding:20px;border-radius:10px;box-shadow:var(--shadow);margin-bottom:20px;}.form-group{margin-bottom:15px;}.form-group label{display:block;margin-bottom:5px;font-weight:bold;}.form-group input, .form-group select, .form-group textarea{width:100%;padding:10px;border:1px solid #ddd;border-radius:5px;font-size:16px;background-color:var(--bg-color);color:var(--text-color);}.form-submit{background:var(--primary-red);color:white;border:none;padding:12px 20px;border-radius:5px;cursor:pointer;font-size:16px;width:100%;}.search-filters{display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:10px;margin-bottom:20px;}.search-container{position:relative;margin-bottom:20px;}.search-container input{width:100%;padding:12px 15px 12px 45px;border:1px solid #ddd;border-radius:8px;font-size:16px;}.search-container .fa-search{position:absolute;top:14px;left:15px;color:#aaa;}
+        .blood-group-filter{display:flex;justify-content:center;background-color:var(--card-bg);padding:10px;border-radius:8px;margin-bottom:20px;box-shadow:var(--shadow);flex-wrap: wrap;}.blood-group-btn{background:var(--light-gray);border:none;border-radius:50%;width:40px;height:40px;font-weight:bold;cursor:pointer;color:var(--primary-red);margin: 5px;}.blood-group-btn.active{background:var(--primary-red);color:white;}#donor-list .donor-item, #admin-contacts .admin-contact-item, #user-list .user-item{background:var(--card-bg);padding:15px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;gap:15px;box-shadow:var(--shadow);}.donor-item{cursor:pointer;}.admin-contact-item .info, #user-list .user-item .info{flex-grow:1;}.admin-contact-item .actions, #user-list .user-item .actions{display:flex;gap:10px;}.admin-contact-item .actions a, #user-list .user-item .actions button{color:var(--primary-red);font-size:20px;text-decoration:none; background: none; border: none; cursor: pointer;}.donor-item img, .admin-contact-item img, #user-list .user-item img{width:50px;height:50px;border-radius:50%;object-fit:cover;}.donor-item .info h4, .admin-contact-item .info h4, #user-list .user-item .info h4{margin:0;}.donor-item .info .donation-status{font-size:0.8rem;font-weight:bold;}.donation-status.eligible{color:var(--green);}.donation-status.not-eligible{color:var(--primary-red);}.donor-item .blood-group{font-weight:bold;color:var(--primary-red);margin-left:auto;}#notice-list .notice-item{background:var(--card-bg);padding:20px;border-radius:8px;margin-bottom:15px;box-shadow:var(--shadow);position:relative;}.notice-actions{position:absolute;top:15px;right:15px;display:flex;gap:10px;}.notice-actions button{background:none;border:none;font-size:16px;cursor:pointer;}.notice-item h4{color:var(--primary-red);}.notice-item .date{font-size:12px;color:#888;margin-bottom:10px;}.notice-item .media-content{margin-top:10px;}.notice-item .media-content img, .notice-item .media-content iframe{max-width:100%;border-radius:5px;} .notice-item .media-content iframe{width:100%;aspect-ratio:16/9;border:none;}.notice-item .product-link{display:inline-block;margin-top:10px;padding:8px 15px;background:var(--primary-red);color:white;border-radius:5px;text-decoration:none;font-weight:bold;}
+        .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:2000;display:flex;justify-content:center;align-items:center;padding:15px;overflow-y:auto;}.modal-content{background:var(--card-bg);padding:25px;border-radius:10px;width:100%;max-width:500px;position:relative;text-align:left;margin:auto 0;}.modal-close-btn{position:absolute;top:10px;right:15px;background:none;border:none;font-size:28px;cursor:pointer;color:var(--text-color);}.modal-header{text-align:center;margin-bottom:20px;}.modal-header img{width:80px;height:80px;border-radius:50%;object-fit:cover;margin-bottom:10px;}.modal-header h3{margin:0;color:var(--primary-red);}.modal-body p{margin-bottom:10px;border-bottom:1px solid var(--light-gray);padding-bottom:10px;}.modal-body a {color: var(--blue); text-decoration: none;}.modal-body strong{color:var(--primary-red);}.modal-footer{text-align:right;margin-top:20px;display:flex;gap:10px;justify-content:flex-end;}.modal-action-btn{color:white;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;}.btn-edit{background:var(--blue);}.btn-add-donation{background:var(--green);}.btn-delete{background:var(--primary-red);}
+        #contact-modal-content .profile-pic { width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 0 auto 20px; display: block; border: 4px solid var(--primary-red); }
+        #contact-modal-content h3 { text-align: center; color: var(--primary-red); font-size: 1.8rem; margin-bottom: 10px; }
+        #contact-modal-content p { text-align: center; font-size: 1.1rem; margin-bottom: 20px; }
+        #donation-history{margin-top:20px;max-height: 150px; overflow-y: auto;}.history-item{background:var(--light-gray);padding:10px;border-radius:5px;margin-bottom:10px;position:relative;}.history-item img{max-width:80px;float:right;border-radius:5px;margin-left:10px;}.history-actions{position:absolute;right:10px;top:10px;display:flex;gap:5px;}.history-actions button{background:none;border:none;cursor:pointer;font-size:14px;}.history-actions .fa-edit{color:var(--blue);}.history-actions .fa-trash{color:var(--primary-red);}
+        #sponsor-list, #notice-page-sponsor-list, #request-page-sponsor-list .sponsor-grid-container {display:grid;grid-template-columns:repeat(auto-fill, minmax(150px, 1fr));gap:15px;}.sponsor-item{background:var(--card-bg);border-radius:8px;box-shadow:var(--shadow);text-align:center;padding:10px;position:relative;}.sponsor-item img{max-width:100%;height:100px;object-fit:contain;border-radius:5px;}.sponsor-item a{text-decoration:none;color:inherit;}.sponsor-actions{position:absolute;top:5px;right:5px;background:rgba(255,255,255,0.8);border-radius:5px;}.sponsor-actions button{background:none;border:none;font-size:14px;cursor:pointer;padding:5px;}
+        #history-page-filters{display:flex;gap:10px;margin-bottom:20px;background:var(--card-bg);padding:15px;border-radius:8px;box-shadow:var(--shadow);}.history-total{font-size:1.2rem;font-weight:bold;margin-bottom:20px;text-align:center;}.history-entry{background:var(--card-bg);padding:15px;border-radius:8px;margin-bottom:10px;box-shadow:var(--shadow); display: flex; align-items: center; gap: 15px;}.history-entry .serial-number { font-size: 1.5rem; font-weight: bold; color: var(--primary-red);}.history-entry .details { flex-grow: 1;}.history-entry .actions button { background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--primary-red); }
+        #update-banner { display: none; background-color: var(--green); color: white; padding: 15px; text-align: center; position: sticky; top: 70px; z-index: 999; }
+        #update-banner a { color: white; font-weight: bold; text-decoration: underline; }
+        .request-item-actions { display: flex; flex-direction: column; gap: 5px; align-items: center; }
+        .request-item-actions button { width: 100%; padding: 5px 10px; font-size: 12px; }
+        #success-modal-content .messenger-button { display: inline-block; margin-top: 20px; padding: 12px 25px; background-color: #0084ff; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        #admin-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        #admin-panel-header .section-title { margin-bottom: 0; border: none; }
+    </style>
+</head>
+<body>
+    <div id="login-page"></div>
+    <div id="main-app" style="display: none;">
+        <header>
+            <div class="container header-content">
+                <div class="logo"><i class="fas fa-tint"></i><h1 data-lang-key="appName">Al Hibah</h1></div>
+                <div class="header-right">
+                    <a href="https://www.facebook.com/share/1GWRjyrBzV/" target="_blank" class="header-link" title="Facebook Page"><i class="fab fa-facebook"></i></a>
+                    <button id="lang-toggle" title="Change Language">EN</button>
+                    <button id="logout-btn" style="display: none;"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+        </header>
+        <div id="update-banner"><span id="update-message"></span> <a href="#" id="update-link" target="_blank" data-lang-key="updateNow">আপডেট করুন</a></div>
+        <main>
+            <div class="container">
+                <section id="home" class="section"></section>
+                <section id="add-donor" class="section"></section>
+                <section id="blood-request" class="section"></section>
+                <section id="notice-board" class="section"></section>
+                <section id="history-page" class="section"></section>
+                <section id="admin-panel" class="section"></section>
+            </div>
+        </main>
+        <footer>
+            <div class="bottom-nav" id="bottom-nav"></div>
+            <div class="footer-contact">
+                <span data-lang-key="contactUs">যে কোন সমস্যা হলে যোগাযোগ করুন</span>: <a href="https://www.facebook.com/share/14KMowCmp4h/" class="contact-link" target="_blank">শাহেদ হাসান সিয়াম</a>
+            </div>
+        </footer>
+    </div>
+    
+    <div id="donor-view-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <div id="modal-body-content"></div>
+            <div class="modal-footer" id="modal-footer-content"></div>
+        </div>
+    </div>
+    <div id="add-donation-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="section-title" id="donation-modal-title" data-lang-key="addDonationTitle">নতুন অনুদান যোগ করুন</h3>
+            <form id="add-donation-form">
+                <input type="hidden" id="donation-donor-id"><input type="hidden" id="donation-history-id"><input type="hidden" id="donation-donor-name">
+                <div class="form-group"><label for="donation-date" data-lang-key="donationDate">রক্তদানের তারিখ</label><input type="date" id="donation-date" required></div>
+                <div class="form-group"><label for="donation-recipient" data-lang-key="recipientLabel">গ্রহীতা/স্থান</label><input type="text" id="donation-recipient" placeholder="রোগীর নাম বা হাসপাতালের নাম" data-lang-key="recipientPlaceholder" required></div>
+                <div class="form-group"><label for="donation-photo" data-lang-key="photoLinkLabel">ছবি/ভিডিও লিংক (ঐচ্ছিক)</label><input type="text" id="donation-photo"></div>
+                <button type="submit" class="form-submit" data-lang-key="submit">জমা দিন</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="contact-view-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content"><button class="modal-close-btn">&times;</button><div id="contact-modal-content"></div></div>
+    </div>
+    
+    <div id="user-management-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="section-title" id="user-modal-title">Add New Official</h3>
+            <form id="user-management-form">
+                <input type="hidden" id="user-id">
+                <div class="form-group"><label data-lang-key="nameLabel">Name</label><input type="text" id="user-name" required></div>
+                <div class="form-group"><label data-lang-key="designationLabel">Designation</label><input type="text" id="user-designation" required></div>
+                <div class="form-group"><label data-lang-key="phoneLabel">Phone</label><input type="text" id="user-phone"></div>
+                <div class="form-group"><label data-lang-key="emailLabel">Email (for login)</label><input type="email" id="user-email"></div>
+                <div class="form-group"><label data-lang-key="profilePicLabel">Profile Picture URL</label><input type="text" id="user-photo-url"></div>
+                <div class="form-group"><label data-lang-key="sortOrderLabel">Sort Order</label><input type="number" id="user-sort-order" required></div>
+                <button type="submit" class="form-submit" data-lang-key="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+
+    <div id="success-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="text-align: center;">
+            <button class="modal-close-btn">&times;</button>
+            <div id="success-modal-content">
+                <i class="fas fa-check-circle" style="font-size: 50px; color: var(--green); margin-bottom: 20px;"></i>
+                <h3 id="success-modal-title"></h3>
+                <div id="success-modal-message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="complete-request-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close-btn">&times;</button>
+            <h3 class="section-title" data-lang-key="completeRequestTitle">আবেদন সম্পন্ন করুন</h3>
+            <form id="complete-request-form">
+                <input type="hidden" id="request-id-to-complete">
+                <div class="form-group">
+                    <label for="donation-serial-number" data-lang-key="donationSerialLabel">ডোনেশন সিরিয়াল নাম্বার</label>
+                    <input type="number" id="donation-serial-number" data-lang-key="donationSerialPlaceholder" placeholder="হিস্টোরি পেজ থেকে সিরিয়াল দিন" required>
+                </div>
+                <button type="submit" class="form-submit" data-lang-key="submit">জমা দিন</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content" style="text-align: center;">
+            <h3 id="confirm-modal-title" data-lang-key="confirmTitle">নিশ্চিত করুন</h3>
+            <p id="confirm-modal-message" style="margin-bottom: 20px;"></p>
+            <div class="modal-footer" style="justify-content: center; gap: 15px;">
+                <button id="confirm-modal-ok" class="modal-action-btn" style="background-color: var(--green);" data-lang-key="ok">ওকে</button>
+                <button id="confirm-modal-cancel" class="modal-action-btn" style="background-color: var(--primary-red);" data-lang-key="cancel">ক্যানসেল</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HTML Templates -->
+    <script type="text/template" id="login-template">
+    <div class="login-container">
+        <div class="login-logo"><i class="fas fa-tint"></i><h1>Al Hibah</h1><p>Blood Network</p></div>
+        <div class="login-type">
+            <button class="login-type-btn active" data-type="admin" data-lang-key="admin">এডমিন</button>
+            <button class="login-type-btn" data-type="hospital" data-lang-key="bloodRequest">ব্লাড রিকুয়েস্ট</button>
+        </div>
+        <form class="login-form active" id="admin-login">
+            <input type="email" id="admin-email" placeholder="ইমেইল" data-lang-key="emailPlaceholder" required>
+            <input type="password" id="admin-password" placeholder="পাসওয়ার্ড" data-lang-key="passwordPlaceholder" required>
+            <button type="submit" class="login-btn" data-lang-key="login">লগইন করুন</button>
+            <div class="error-message" id="admin-error"></div>
+        </form>
+        <form class="login-form" id="hospital-login">
+            <input type="text" id="requester-name" placeholder="আপনার নাম বা প্রতিষ্ঠানের নাম" data-lang-key="requesterPlaceholder" required>
+            <button type="submit" class="login-btn" data-lang-key="enter">প্রবেশ করুন</button>
+        </form>
+    </div>
+    </script>
+    <script type="text/template" id="home-template">
+        <h2 class="section-title" data-lang-key="donorListTitle">রক্তদাতাদের তালিকা</h2>
+        <div class="search-container"><i class="fas fa-search"></i><input type="text" id="search-input" placeholder="নাম বা ফোন দিয়ে খুঁজুন..." data-lang-key="searchPlaceholder"></div>
+        <div class="search-filters" id="search-filters"></div>
+        <div class="blood-group-filter" id="blood-group-filter"></div>
+        <div id="donor-list"></div>
+    </script>
+    <script type="text/template" id="add-donor-template"><h2 class="section-title" data-lang-key="addEditDonorTitle">নতুন রক্তদাতা যোগ/এডিট করুন</h2><div class="form-container"><form id="add-donor-form"><input type="hidden" id="donor-id"><div class="form-group"><label for="donor-name" data-lang-key="nameLabel">নাম</label><input type="text" id="donor-name" required></div><div class="form-group"><label for="donor-phone" data-lang-key="phoneLabel">ফোন নম্বর</label><input type="text" id="donor-phone" required></div><div class="form-group"><label for="donor-blood-group" data-lang-key="bloodGroupLabel">রক্তের গ্রুপ</label><select id="donor-blood-group" required></select></div><div class="form-group"><label for="donor-village" data-lang-key="villageLabel">গ্রাম</label><input type="text" id="donor-village"></div><div class="form-group"><label for="donor-union" data-lang-key="unionLabel">ইউনিয়ন</label><input type="text" id="donor-union"></div><div class="form-group"><label for="donor-ward" data-lang-key="wardLabel">ওয়ার্ড</label><input type="text" id="donor-ward"></div><div class="form-group"><label for="donor-authority" data-lang-key="authorityLabel">কার অধীনস্থ (নাম - নাম্বার)</label><input type="text" id="donor-authority"></div><div class="form-group"><label for="donor-pic-url" data-lang-key="profilePicLabel">প্রোফাইল ছবির লিংক</label><input type="text" id="donor-pic-url"></div><button type="submit" class="form-submit" id="donor-form-submit-btn" data-lang-key="submitInfo">তথ্য জমা দিন</button></form></div></script>
+    
+    <script type="text/template" id="blood-request-template">
+        <div id="guest-request-view">
+            <button id="show-request-form-btn" class="form-submit" data-lang-key="makeRequestBtn" style="width: 100%; padding: 15px; font-size: 1.2rem; margin-bottom: 20px;">রক্তের আবেদন করুন</button>
+            <div class="form-container" id="blood-request-form-container" style="display:none;">
+                <h2 class="section-title" data-lang-key="urgentRequestTitle">জরুরী রক্তের আবেদন</h2>
+                <form id="blood-request-form">
+                    <div class="form-group"><label for="req-blood-group" data-lang-key="reqBloodGroup">প্রয়োজনীয় রক্তের গ্রুপ</label><select id="req-blood-group" required></select></div>
+                    <div class="form-group"><label for="req-hospital-name" data-lang-key="hospitalName">হাসপাতালের নাম</label><input type="text" id="req-hospital-name" required></div>
+                    <div class="form-group"><label for="req-room-number" data-lang-key="roomNumber">রুম নম্বর</label><input type="text" id="req-room-number" required></div>
+                    <div class="form-group"><label for="req-patient-name" data-lang-key="patientName">রোগীর নাম</label><input type="text" id="req-patient-name" required></div>
+                    <div class="form-group"><label for="req-patient-phone" data-lang-key="contactNumber">যোগাযোগের নম্বর</label><input type="text" id="req-patient-phone" required></div>
+                    <button type="submit" class="form-submit" data-lang-key="submitRequest">আবেদন করুন</button>
+                </form>
+            </div>
+            <div id="request-page-notice-wrapper" style="margin-top: 30px;">
+                <h2 class="section-title" data-lang-key="noticeBoard">নোটিশ বোর্ড</h2>
+                <div id="request-page-notice-list"></div>
+            </div>
+            <div id="request-page-sponsor-list" style="margin-top: 20px;"></div>
+            <div id="admin-contacts" style="margin-top: 20px;"></div>
+        </div>
+        <div id="admin-request-view">
+            <div id="pending-requests-container"></div>
+        </div>
+    </script>
+
+    <script type="text/template" id="notice-board-template">
+        <h2 class="section-title" data-lang-key="noticeBoard">নোটিশ বোর্ড</h2>
+        <div class="form-container" id="add-notice-container" style="display:none;">
+            <h3 id="notice-form-title" data-lang-key="addNoticeTitle">নতুন নোটিশ দিন</h3>
+            <form id="add-notice-form"><input type="hidden" id="notice-id">
+                <div class="form-group"><label for="notice-title" data-lang-key="titleLabel">শিরোনাম</label><input type="text" id="notice-title" required></div>
+                <div class="form-group"><label for="notice-content" data-lang-key="detailsLabel">বিস্তারিত</label><textarea id="notice-content" required></textarea></div>
+                <div class="form-group"><label for="notice-media-url" data-lang-key="mediaUrlLabel">ছবি বা ইউটিউব ভিডিও লিংক (ঐচ্ছিক)</label><input type="text" id="notice-media-url"></div>
+                <div class="form-group"><label for="notice-target-url" data-lang-key="productUrlLabel">পণ্যের লিংক (ঐচ্ছিক)</label><input type="text" id="notice-target-url"></div>
+                <button type="submit" class="form-submit" data-lang-key="publish">প্রকাশ করুন</button>
+            </form>
+        </div>
+        <div id="notice-list"></div>
+        <div id="sponsors-on-notice-page" style="margin-top: 30px;">
+            <h2 class="section-title" data-lang-key="ourSponsors">আমাদের স্পন্সরগণ</h2>
+            <div class="form-container" id="add-sponsor-container" style="display:none;">
+                <h3 id="sponsor-form-title" data-lang-key="addSponsorTitle">নতুন স্পন্সর যোগ করুন</h3>
+                <form id="add-sponsor-form"><input type="hidden" id="sponsor-id">
+                    <div class="form-group"><label for="sponsor-image-url" data-lang-key="sponsorImgUrl">স্পন্সর ছবির লিংক</label><input type="text" id="sponsor-image-url" required></div>
+                    <div class="form-group"><label for="sponsor-target-url" data-lang-key="sponsorWebUrl">ওয়েবসাইট লিংক (ঐচ্ছিক)</label><input type="text" id="sponsor-target-url"></div>
+                    <button type="submit" class="form-submit" data-lang-key="add">যোগ করুন</button>
+                </form>
+            </div>
+            <div id="notice-page-sponsor-list"></div>
+        </div>
+    </script>
+    
+    <script type="text/template" id="history-page-template"><h2 class="section-title" data-lang-key="donationHistory">রক্তদানের ইতিহাস</h2><div id="history-page-filters"><select id="history-year-filter"></select><select id="history-month-filter"></select></div><div id="history-total" class="history-total"></div><div id="history-list">লোড হচ্ছে...</div></script>
+    <script type="text/template" id="admin-panel-template">
+        <div id="admin-panel-header">
+             <h2 class="section-title" data-lang-key="manageOfficials">দায়িত্বশীলদের পরিচালনা করুন</h2>
+             <button id="add-new-user-btn" class="form-submit" style="width: auto;">+ <span data-lang-key="addNew">নতুন</span></button>
+        </div>
+        <div id="user-list"></div>
+    </script>
+    
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDS7lTLaXA5UCH5dRfAWCQUEMnatkau0mE", authDomain: "hibah-8cf95.firebaseapp.com", projectId: "hibah-8cf95", storageBucket: "hibah-8cf95.firebasestorage.app", messagingSenderId: "412438081502", appId: "1:412438081502:web:7d7f8fe91d3f95b23ab74f", measurementId: "G-WKW8WWMBN1"
+        };
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.firestore();
+        const auth = firebase.auth();
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginPage = document.getElementById('login-page');
+            const mainApp = document.getElementById('main-app');
+            const bloodGroups = ["A+", "A-", "B+", "B-", "O+", "O-", "AB+", "AB-"];
+            let currentUserRole = 'guest';
+            let allDonors = [];
+            let allAdminUsers = [];
+            const currentAppVersion = "1.0.8"; // Updated version
+            let currentLang = localStorage.getItem('appLanguage') || 'bn';
+
+            const translations = {
+                bn: {
+                    appName: "আল হিবাহ", contactUs: "যে কোন সমস্যা হলে যোগাযোগ করুন", admin: "এডমিন", bloodRequest: "ব্লাড রিকুয়েস্ট",
+                    emailPlaceholder: "ইমেইল", passwordPlaceholder: "পাসওয়ার্ড", login: "লগইন করুন", requesterPlaceholder: "আপনার নাম বা প্রতিষ্ঠানের নাম",
+                    enter: "প্রবেশ করুন", donorListTitle: "রক্তদাতাদের তালিকা", searchPlaceholder: "নাম বা ফোন দিয়ে খুঁজুন...",
+                    addEditDonorTitle: "নতুন রক্তদাতা যোগ/এডিট করুন", nameLabel: "নাম", phoneLabel: "ফোন নম্বর", bloodGroupLabel: "রক্তের গ্রুপ",
+                    villageLabel: "গ্রাম", unionLabel: "ইউনিয়ন", wardLabel: "ওয়ার্ড", authorityLabel: "কার অধীনস্থ (নাম - নাম্বার)", profilePicLabel: "প্রোফাইল ছবির লিংক",
+                    submitInfo: "তথ্য জমা দিন", urgentRequestTitle: "জরুরী রক্তের আবেদন", reqBloodGroup: "প্রয়োজনীয় রক্তের গ্রুপ", hospitalName: "হাসপাতালের নাম",
+                    roomNumber: "রুম নম্বর", patientName: "রোগীর নাম", contactNumber: "যোগাযোগের নম্বর", submitRequest: "আবেদন করুন",
+                    noticeBoard: "নোটিশ বোর্ড", addNoticeTitle: "নতুন নোটিশ দিন", titleLabel: "শিরোনাম", detailsLabel: "বিস্তারিত",
+                    mediaUrlLabel: "ছবি বা ইউটিউব ভিডিও লিংক (ঐচ্ছিক)", productUrlLabel: "পণ্যের লিংক (ঐচ্ছিক)", publish: "প্রকাশ করুন",
+                    addSponsorTitle: "নতুন স্পন্সর যোগ করুন", sponsorImgUrl: "স্পন্সর ছবির লিংক", sponsorWebUrl: "ওয়েবসাইট লিংক (ঐচ্ছিক)",
+                    add: "যোগ করুন", ourSponsors: "আমাদের স্পন্সরগণ", donationHistory: "রক্তদানের ইতিহাস", adminPanel: "এডমিন প্যানেল",
+                    addNewUser: "নতুন ব্যবহারকারী (সাব-এডমিন) যোগ করুন", emailLabel: "ইমেইল (লগইন করার জন্য)", passwordLabel: "পাসওয়ার্ড", addUser: "ব্যবহারকারী যোগ করুন",
+                    currentUsers: "বর্তমান ব্যবহারকারীগণ", navDonors: "ডোনার", navNewDonor: "নতুন ডোনার", navRequest: "আবেদন", navNotice: "নোটিশ",
+                    navHistory: "হিস্টোরি", addDonationTitle: "নতুন অনুদান যোগ করুন",
+                    donationDate: "রক্তদানের তারিখ", recipientLabel: "গ্রহীতা/স্থান", recipientPlaceholder: "রোগীর নাম বা হাসপাতালের নাম",
+                    photoLinkLabel: "ছবি/ভিডিও লিংক (ঐচ্ছিক)", submit: "জমা দিন", readyToDonate: "রক্তদানে প্রস্তুত", lastDonation: "শেষ রক্তদান",
+                    donationHistoryModal: "ডোনেট হিস্টোরি:", noHistoryFound: "কোনো ইতিহাস পাওয়া যায়নি", phone: "ফোন", address: "ঠিকানা",
+                    authority: "অধীনস্থ", addDonationBtn: "অনুদান যোগ", editBtn: "এডিট করুন", deleteBtn: "ডিলিট করুন",
+                    contactPersonTitle: "দায়িত্বশীলদের সাথে যোগাযোগ:", volunteer: "স্বেচ্ছাসেবী", pendingRequests: "অপেক্ষমান আবেদন",
+                    noPendingRequests: "কোনো অপেক্ষমান আবেদন নেই", totalDonations: "মোট রক্তদান", updateNow: "আপডেট করুন", makeRequestBtn: "রক্তের আবেদন করুন",
+                    requestSuccessTitle: "আবেদন সফল হয়েছে", requestSuccessMsg: "আপনার রক্তের আবেদনটি সফলভাবে জমা হয়েছে। আমাদের একজন দায়িত্বশীল শীঘ্রই আপনার সাথে যোগাযোগ করবেন।",
+                    fastContactMsg: "দ্রুত যোগাযোগের জন্য মেসেজ করুন",
+                    confirmTitle: "নিশ্চিত করুন", ok: "ওকে", cancel: "ক্যানসেল",
+                    requestCompletedConfirm: "আপনি কি নিশ্চিত যে এই আবেদনটি সম্পন্ন হয়েছে?",
+                    deleteHistoryConfirm: "আপনি কি নিশ্চিত যে আপনি এই ইতিহাসটি মুছে ফেলতে চান?",
+                    deleteMemberConfirm: "আপনি কি নিশ্চিত যে আপনি এই সদস্যকে মুছে ফেলতে চান?",
+                    deleteNoticeConfirm: "আপনি কি নিশ্চিত যে আপনি এই নোটিশটি মুছে ফেলতে চান?",
+                    deleteSponsorConfirm: "আপনি কি নিশ্চিত যে আপনি এই স্পনসরটি মুছে ফেলতে চান?",
+                    deleteUserConfirm: "আপনি কি নিশ্চিত যে আপনি এই দায়িত্বশীলকে মুছে ফেলতে চান?",
+                    deleteRequestConfirm: "আপনি কি নিশ্চিত যে আপনি এই রক্তের আবেদনটি মুছে ফেলতে চান?",
+                    completeRequestTitle: "আবেদন সম্পন্ন করুন", donationSerialLabel: "ডোনেশন সিরিয়াল নাম্বার", donationSerialPlaceholder: "হিস্টোরি পেজ থেকে সিরিয়াল দিন",
+                    allVillages: "সব গ্রাম", allUnions: "সব ইউনিয়ন", allWards: "সব ওয়ার্ড", allAuthorities: "সবার অধীনস্থ",
+                    invalidSerial: "ভুল সিরিয়াল নাম্বার। অনুগ্রহ করে সঠিক সিরিয়াল নাম্বার দিন।",
+                    manageOfficials: "দায়িত্বশীলদের পরিচালনা করুন", addNew: "নতুন যোগ করুন",
+                    designationLabel: "পদবী", addNewOfficial: "নতুন দায়িত্বশীল যোগ করুন", editOfficial: "দায়িত্বশীলের তথ্য এডিট করুন",
+                    sortOrderLabel: "ক্রমিক নং"
+                },
+                en: {
+                    appName: "Al Hibah", contactUs: "Contact for any problem", admin: "Admin", bloodRequest: "Blood Request",
+                    emailPlaceholder: "Email", passwordPlaceholder: "Password", login: "Login", requesterPlaceholder: "Your name or organization's name",
+                    enter: "Enter", donorListTitle: "Donor List", searchPlaceholder: "Search by name or phone...",
+                    addEditDonorTitle: "Add/Edit Donor", nameLabel: "Name", phoneLabel: "Phone Number", bloodGroupLabel: "Blood Group",
+                    villageLabel: "Village", unionLabel: "Union", wardLabel: "Ward", authorityLabel: "Authority (Name - Number)", profilePicLabel: "Profile Picture URL",
+                    submitInfo: "Submit Information", urgentRequestTitle: "Urgent Blood Request", reqBloodGroup: "Required Blood Group", hospitalName: "Hospital Name",
+                    roomNumber: "Room Number", patientName: "Patient Name", contactNumber: "Contact Number", submitRequest: "Submit Request",
+                    noticeBoard: "Notice Board", addNoticeTitle: "Add New Notice", titleLabel: "Title", detailsLabel: "Details",
+                    mediaUrlLabel: "Image or YouTube Video URL (Optional)", productUrlLabel: "Product URL (Optional)", publish: "Publish",
+                    addSponsorTitle: "Add New Sponsor", sponsorImgUrl: "Sponsor Image URL", sponsorWebUrl: "Website URL (Optional)",
+                    add: "Add", ourSponsors: "Our Sponsors", donationHistory: "Donation History", adminPanel: "Admin Panel",
+                    addNewUser: "Add New User (Sub-Admin)", emailLabel: "Email (for login)", passwordLabel: "Password", addUser: "Add User",
+                    currentUsers: "Current Users", navDonors: "Donors", navNewDonor: "New Donor", navRequest: "Request", navNotice: "Notice",
+                    navHistory: "History", addDonationTitle: "Add New Donation",
+                    donationDate: "Donation Date", recipientLabel: "Recipient/Place", recipientPlaceholder: "Patient's or hospital's name",
+                    photoLinkLabel: "Photo/Video URL (Optional)", submit: "Submit", readyToDonate: "Ready to Donate", lastDonation: "Last Donation",
+                    donationHistoryModal: "Donation History:", noHistoryFound: "No history found", phone: "Phone", address: "Address",
+                    authority: "Authority", addDonationBtn: "Add Donation", editBtn: "Edit", deleteBtn: "Delete",
+                    contactPersonTitle: "Contact Persons in Charge:", volunteer: "Volunteer", pendingRequests: "Pending Requests",
+                    noPendingRequests: "No pending requests", totalDonations: "Total Donations", updateNow: "Update Now", makeRequestBtn: "Make a Blood Request",
+                    requestSuccessTitle: "Request Successful", requestSuccessMsg: "Your blood request has been submitted successfully. One of our representatives will contact you shortly.",
+                    fastContactMsg: "Message for faster communication",
+                    confirmTitle: "Confirm", ok: "OK", cancel: "Cancel",
+                    requestCompletedConfirm: "Are you sure this request is completed?",
+                    deleteHistoryConfirm: "Are you sure you want to delete this history entry?",
+                    deleteMemberConfirm: "Are you sure you want to delete this member?",
+                    deleteNoticeConfirm: "Are you sure you want to delete this notice?",
+                    deleteSponsorConfirm: "Are you sure you want to delete this sponsor?",
+                    deleteUserConfirm: "Are you sure you want to delete this official?",
+                    deleteRequestConfirm: "Are you sure you want to delete this blood request?",
+                    completeRequestTitle: "Complete Request", donationSerialLabel: "Donation Serial Number", donationSerialPlaceholder: "Enter serial from history page",
+                    allVillages: "All Villages", allUnions: "All Unions", allWards: "All Wards", allAuthorities: "All Authorities",
+                    invalidSerial: "Invalid serial number. Please provide a correct one.",
+                    manageOfficials: "Manage Officials", addNew: "Add New",
+                    designationLabel: "Designation", addNewOfficial: "Add New Official", editOfficial: "Edit Official's Info",
+                    sortOrderLabel: "Sort Order"
+                }
+            };
+
+            function setLanguage(lang) {
+                currentLang = lang;
+                localStorage.setItem('appLanguage', lang);
+                document.documentElement.lang = lang;
+                const langToggleBtn = document.getElementById('lang-toggle');
+                const appNameEl = document.querySelector('.logo h1');
+
+                if(langToggleBtn) langToggleBtn.textContent = lang === 'bn' ? 'EN' : 'BN';
+                
+                if (lang === 'bn') {
+                    appNameEl.style.fontFamily = "'Hind Siliguri', sans-serif";
+                    appNameEl.style.fontSize = '1.5rem';
+                    appNameEl.textContent = "আল হিবাহ";
+                } else {
+                    appNameEl.style.fontFamily = "'Luckiest Guy', cursive";
+                    appNameEl.style.fontSize = '1.8rem';
+                    appNameEl.textContent = "Al Hibah";
+                }
+
+                document.querySelectorAll('[data-lang-key]').forEach(el => {
+                    const key = el.dataset.langKey;
+                    if (el.getAttribute('data-lang-key') === 'appName') return; 
+
+                    if (translations[lang] && translations[lang][key]) {
+                        if(el.placeholder !== undefined) el.placeholder = translations[lang][key];
+                        else if (el.tagName === 'INPUT' && el.type === 'submit') el.value = translations[lang][key];
+                        else el.textContent = translations[lang][key];
+                    }
+                });
+                
+                if (allDonors.length > 0) {
+                    populateSearchFilters();
+                    applyFilters();
+                }
+                populateHistoryFilters();
+                if(document.getElementById('history-page').classList.contains('active')) loadGlobalHistory();
+            }
+
+            function renderTemplates() {
+                document.getElementById('login-page').innerHTML = document.getElementById('login-template').innerHTML;
+                document.getElementById('home').innerHTML = document.getElementById('home-template').innerHTML;
+                document.getElementById('add-donor').innerHTML = document.getElementById('add-donor-template').innerHTML;
+                document.getElementById('blood-request').innerHTML = document.getElementById('blood-request-template').innerHTML;
+                document.getElementById('notice-board').innerHTML = document.getElementById('notice-board-template').innerHTML;
+                document.getElementById('history-page').innerHTML = document.getElementById('history-page-template').innerHTML;
+                document.getElementById('admin-panel').innerHTML = document.getElementById('admin-panel-template').innerHTML;
+            }
+            renderTemplates();
+            setLanguage(currentLang);
+            addEventListeners();
+
+            const showSection = (sectionId) => {
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById(sectionId)?.classList.add('active');
+                document.querySelectorAll('.nav-icon').forEach(n => n.classList.remove('active'));
+                const navIcon = document.querySelector(`.nav-icon[data-section="${sectionId}"]`);
+                if (navIcon) navIcon.classList.add('active');
+                if (sectionId === 'history-page') { loadGlobalHistory(); }
+                if (sectionId === 'notice-board') { loadSponsors('notice-page-sponsor-list'); }
+                 if (sectionId === 'admin-panel') { loadAdminUsers(); }
+            };
+
+            const setupUIForUser = (user, userData) => {
+                currentUserRole = userData.role; 
+                loginPage.style.display = 'none'; mainApp.style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
+                
+                const navContainer = document.getElementById('bottom-nav');
+                navContainer.style.display = 'flex';
+                let navHTML = `
+                    <div class="nav-icon active" data-section="home"><i class="fas fa-users"></i><span data-lang-key="navDonors"></span></div>
+                    <div class="nav-icon" data-section="add-donor"><i class="fas fa-user-plus"></i><span data-lang-key="navNewDonor"></span></div>
+                    <div class="nav-icon" data-section="blood-request"><i class="fas fa-tint"></i><span data-lang-key="navRequest"></span><span class="notification-badge" id="notification-count" style="display:none;">0</span></div>
+                    <div class="nav-icon" data-section="notice-board"><i class="fas fa-bullhorn"></i><span data-lang-key="navNotice"></span></div>
+                    <div class="nav-icon" data-section="history-page"><i class="fas fa-history"></i><span data-lang-key="navHistory"></span></div>`;
+                
+                if (currentUserRole === 'admin') {
+                    navHTML += `<div class="nav-icon" data-section="admin-panel"><i class="fas fa-cogs"></i><span data-lang-key="adminPanel"></span></div>`;
+                    document.getElementById('add-notice-container').style.display = 'block';
+                    document.getElementById('add-sponsor-container').style.display = 'block';
+                } else { 
+                    document.getElementById('add-notice-container').style.display = 'none';
+                    document.getElementById('add-sponsor-container').style.display = 'none';
+                }
+
+                navContainer.innerHTML = navHTML;
+                
+                document.getElementById('guest-request-view').style.display = 'none';
+                document.getElementById('admin-request-view').style.display = 'block';
+
+                addNavListeners(); 
+                loadInitialData();
+                setLanguage(currentLang);
+            };
+
+            const setupUIForHospital = async () => {
+                currentUserRole = 'guest';
+                loginPage.style.display = 'none'; mainApp.style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'none';
+                document.getElementById('bottom-nav').style.display = 'none';
+                
+                populateDropdowns(); 
+                showSection('blood-request');
+
+                document.getElementById('guest-request-view').style.display = 'block';
+                document.getElementById('admin-request-view').style.display = 'none';
+
+                loadNotices('request-page-notice-list');
+                loadSponsors('request-page-sponsor-list');
+                
+                const contactContainer = document.getElementById('admin-contacts');
+                contactContainer.innerHTML = `<h3 class="section-title" data-lang-key="contactPersonTitle">${translations[currentLang].contactPersonTitle}</h3>`;
+                try {
+                    const snapshot = await db.collection('users').orderBy('sortOrder').get();
+                    allAdminUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                    let contactsHTML = '';
+                    allAdminUsers.forEach(user => {
+                        contactsHTML += generateContactHTML(user);
+                    });
+
+                    contactContainer.innerHTML += contactsHTML || `<p>${translations[currentLang].noHistoryFound}</p>`;
+                    
+                    document.querySelectorAll('.admin-contact-item[data-id]').forEach(item => {
+                        item.addEventListener('click', (e) => {
+                            if (e.target.closest('.actions')) return;
+                            showContactModal(item.dataset.id);
+                        });
+                    });
+
+                } catch (e) { console.error("Error loading contacts:", e); contactContainer.innerHTML += `<p>Error loading contacts.</p>`; }
+            };
+
+            function formatWhatsAppLink(phone) {
+                if (!phone) return '';
+                let cleanedPhone = phone.replace(/[^0-9]/g, '');
+                if (cleanedPhone.startsWith('01')) {
+                    cleanedPhone = '88' + cleanedPhone;
+                } else if (cleanedPhone.startsWith('1') && cleanedPhone.length === 10) {
+                     cleanedPhone = '880' + cleanedPhone;
+                }
+                return `https://wa.me/${cleanedPhone}`;
+            }
+
+            function generateContactHTML(user) {
+                const phone = user.phone || '';
+                let actions = '';
+                if(phone) {
+                    actions += `<a href="tel:${phone}"><i class="fas fa-phone"></i></a>`;
+                    const whatsappLink = formatWhatsAppLink(phone);
+                    if (whatsappLink) {
+                        actions += `<a href="${whatsappLink}" target="_blank"><i class="fab fa-whatsapp"></i></a>`;
+                    }
+                }
+                
+                return `<div class="admin-contact-item" data-id="${user.id}" style="cursor:pointer;">
+                    <img src="${user.photoUrl || 'https://i.ibb.co/6y4nwtN/240-F-215844325-tt-X9-U2-Uhd-A-He-Gm-I2-Psp7-UNn-Zs-U-4-Ss-8-S.jpg'}" alt="${user.name}">
+                    <div class="info">
+                        <h4>${user.name}</h4>
+                        <span>${user.designation || translations[currentLang].volunteer}</span>
+                    </div>
+                    <div class="actions">${actions}</div>
+                </div>`;
+            }
+            
+            function showContactModal(userId) {
+                const user = allAdminUsers.find(u => u.id === userId);
+                if (!user) return;
+                const modal = document.getElementById('contact-view-modal');
+                const content = document.getElementById('contact-modal-content');
+
+                content.innerHTML = `
+                    <img src="${user.photoUrl || 'https://i.ibb.co/6y4nwtN/240-F-215844325-tt-X9-U2-Uhd-A-He-Gm-I2-Psp7-UNn-Zs-U-4-Ss-8-S.jpg'}" alt="${user.name}" class="profile-pic">
+                    <h3>${user.name}</h3>
+                    <p>${user.designation || translations[currentLang].volunteer}</p>
+                    <p><strong>${translations[currentLang].phone}:</strong> ${user.phone || 'N/A'}</p>
+                `;
+                modal.style.display = 'flex';
+            }
+
+            function showRequestSuccessPrompt() {
+                const modal = document.getElementById('success-modal');
+                const titleEl = document.getElementById('success-modal-title');
+                const messageEl = document.getElementById('success-modal-message');
+                
+                titleEl.textContent = translations[currentLang]['requestSuccessTitle'];
+                messageEl.textContent = translations[currentLang]['requestSuccessMsg'];
+                modal.style.display = 'flex';
+                
+                setTimeout(() => {
+                    window.open('https://www.facebook.com/share/1GWRjyrBzV/', '_blank');
+                }, 1500);
+            }
+
+            function showConfirmModal(messageKey, callback) {
+                const modal = document.getElementById('confirm-modal');
+                const messageEl = document.getElementById('confirm-modal-message');
+                const okBtn = document.getElementById('confirm-modal-ok');
+                const cancelBtn = document.getElementById('confirm-modal-cancel');
+
+                document.getElementById('confirm-modal-title').textContent = translations[currentLang]['confirmTitle'];
+                okBtn.textContent = translations[currentLang]['ok'];
+                cancelBtn.textContent = translations[currentLang]['cancel'];
+                messageEl.textContent = translations[currentLang][messageKey];
+                
+                const newOkBtn = okBtn.cloneNode(true);
+                okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+                const newCancelBtn = cancelBtn.cloneNode(true);
+                cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+                modal.style.display = 'flex';
+
+                newOkBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    callback(true);
+                }, { once: true });
+
+                newCancelBtn.addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    callback(false);
+                }, { once: true });
+            }
+
+            auth.onAuthStateChanged(async (user) => {
+                if (user) {
+                    try {
+                        const userDoc = await db.collection('users').doc(user.uid).get();
+                        if (userDoc.exists) { setupUIForUser(user, userDoc.data()); } 
+                        else { auth.signOut(); }
+                    } catch (error) { auth.signOut(); }
+                } else {
+                    mainApp.style.display = 'none'; loginPage.style.display = 'flex';
+                    setLanguage(currentLang);
+                }
+            });
+
+            function addEventListeners() {
+                document.getElementById('lang-toggle').addEventListener('click', () => {
+                    const newLang = currentLang === 'bn' ? 'en' : 'bn';
+                    setLanguage(newLang);
+                });
+                
+                document.body.addEventListener('submit', function(e) {
+                    const formId = e.target.id;
+                    if (formId === 'admin-login') { e.preventDefault(); onAdminLogin(); }
+                    else if (formId === 'hospital-login') { e.preventDefault(); onHospitalLogin(); }
+                    else if (formId === 'add-donor-form') { e.preventDefault(); onDonorFormSubmit(e); }
+                    else if (formId === 'add-donation-form') { e.preventDefault(); onAddDonationFormSubmit(e); }
+                    else if (formId === 'add-notice-form') { e.preventDefault(); onNoticeFormSubmit(e); }
+                    else if (formId === 'add-sponsor-form') { e.preventDefault(); onSponsorFormSubmit(e); }
+                    else if (formId === 'blood-request-form') { e.preventDefault(); onBloodRequestFormSubmit(e); }
+                    else if (formId === 'user-management-form') { e.preventDefault(); onUserManagementFormSubmit(); }
+                    else if (formId === 'complete-request-form') { e.preventDefault(); onCompleteRequestSubmit(); }
+                });
+
+                document.body.addEventListener('click', function(e) {
+                    const target = e.target;
+                    const closest = (selector) => target.closest(selector);
+
+                    if (closest('#logout-btn')) { auth.signOut(); location.reload(); }
+                    if (closest('.modal-close-btn')) { closest('.modal-overlay').style.display = 'none'; }
+                    if (closest('.btn-edit')) { onModalEditClick(closest('.btn-edit')); }
+                    if (closest('.btn-delete')) { onModalDeleteClick(closest('.btn-delete')); }
+                    if (closest('.btn-add-donation')) { onModalAddDonationClick(closest('.btn-add-donation')); }
+                    if (closest('.edit-history')) { handleHistoryEdit(closest('.edit-history').dataset.donorId, closest('.edit-history').dataset.historyId); }
+                    if (closest('.delete-history')) { handleHistoryDelete(closest('.delete-history').dataset.donorId, closest('.delete-history').dataset.historyId); }
+                    if (closest('.edit-notice')) { handleNoticeEdit(closest('.edit-notice').dataset.id); }
+                    if (closest('.delete-notice')) { handleNoticeDelete(closest('.delete-notice').dataset.id); }
+                    if (closest('.delete-sponsor')) { handleSponsorDelete(closest('.delete-sponsor').dataset.id); }
+                     if (closest('#add-new-user-btn')) { showUserManagementModal(); }
+                    if (closest('#show-request-form-btn')) { 
+                        const formContainer = document.getElementById('blood-request-form-container');
+                        formContainer.style.display = 'block';
+                        target.style.display = 'none';
+                        formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    if (closest('.login-type-btn')) {
+                        document.querySelectorAll('.login-type-btn').forEach(b => b.classList.remove('active'));
+                        target.classList.add('active');
+                        document.querySelectorAll('.login-form').forEach(form => form.classList.remove('active'));
+                        document.getElementById(`${target.dataset.type}-login`).classList.add('active');
+                    }
+                });
+                
+                document.getElementById('search-input')?.addEventListener('input', applyFilters);
+                document.getElementById('history-year-filter')?.addEventListener('change', loadGlobalHistory);
+                document.getElementById('history-month-filter')?.addEventListener('change', loadGlobalHistory);
+            }
+            
+            function onAdminLogin() {
+                const email = document.getElementById('admin-email').value;
+                const password = document.getElementById('admin-password').value;
+                auth.signInWithEmailAndPassword(email, password).catch(err => {
+                    document.getElementById('admin-error').textContent = translations[currentLang].loginError || "Incorrect email or password.";
+                    document.getElementById('admin-error').style.display = 'block';
+                });
+            }
+
+            function onHospitalLogin() {
+                const requesterName = document.getElementById('requester-name').value;
+                if (requesterName.trim() === '') { alert(translations[currentLang].enterNameError || 'Please enter your name.'); return; }
+                setupUIForHospital();
+            }
+            
+            async function loadDonors() {
+                const donorList = document.getElementById('donor-list');
+                donorList.innerHTML = translations[currentLang].loading || 'Loading...';
+                try {
+                    const snapshot = await db.collection('donors').orderBy('name').get();
+                    allDonors = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    populateSearchFilters();
+                    applyFilters();
+                } catch(e) { donorList.innerHTML = `<p style="color:red;">Failed to load donors.</p>`; }
+            }
+
+            function getDonationStatusHTML(lastDonationDate) {
+                const readyText = translations[currentLang].readyToDonate;
+                const lastDonationText = translations[currentLang].lastDonation;
+
+                if (!lastDonationDate) return `<span class="donation-status eligible">${readyText}</span>`;
+                const lastDate = new Date(lastDonationDate); const today = new Date();
+                const threeMonthsAgo = new Date(); threeMonthsAgo.setMonth(today.getMonth() - 3);
+                const formattedDate = lastDate.toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-GB');
+                return lastDate < threeMonthsAgo 
+                    ? `<span class="donation-status eligible">${lastDonationText}: ${formattedDate}</span>` 
+                    : `<span class="donation-status not-eligible">${lastDonationText}: ${formattedDate}</span>`;
+            }
+
+            function renderDonors(donors) {
+                const donorList = document.getElementById('donor-list');
+                if (donors.length === 0) { donorList.innerHTML = `<p>${translations[currentLang].noDonorsFound || 'No donors found.'}</p>`; return; }
+                donorList.innerHTML = donors.map(donor => `
+                    <div class="donor-item" data-id="${donor.id}">
+                        <img src="${donor.profilePicUrl || 'https://i.ibb.co/6y4nwtN/240-F-215844325-tt-X9-U2-Uhd-A-He-Gm-I2-Psp7-UNn-Zs-U-4-Ss-8-S.jpg'}" alt="${donor.name}">
+                        <div class="info"><h4>${donor.name}</h4>${getDonationStatusHTML(donor.lastDonationDate)}</div>
+                        <div class="blood-group">${donor.bloodGroup}</div>
+                    </div>`).join('');
+                document.querySelectorAll('#donor-list .donor-item').forEach(item => item.addEventListener('click', () => showDonorModal(item.dataset.id)));
+            }
+            
+            function applyFilters() {
+                const searchTerm = document.getElementById('search-input').value.toLowerCase();
+                const village = document.getElementById('filter-village')?.value;
+                const union = document.getElementById('filter-union')?.value;
+                const ward = document.getElementById('filter-ward')?.value;
+                const authority = document.getElementById('filter-authority')?.value;
+                const bloodGroup = document.querySelector('.blood-group-btn.active')?.dataset.group;
+
+                let filtered = allDonors.filter(d => {
+                    const nameMatch = d.name && d.name.toLowerCase().includes(searchTerm);
+                    const phoneMatch = d.phone && d.phone.includes(searchTerm);
+                    const villageMatch = !village || (d.village && d.village === village);
+                    const unionMatch = !union || (d.union && d.union === union);
+                    const wardMatch = !ward || (d.ward && d.ward === ward);
+                    const authorityMatch = !authority || (d.authority && d.authority.includes(authority));
+                    const bloodGroupMatch = !bloodGroup || bloodGroup === 'all' || (d.bloodGroup && d.bloodGroup === bloodGroup);
+                    
+                    return (nameMatch || phoneMatch) && villageMatch && unionMatch && wardMatch && authorityMatch && bloodGroupMatch;
+                });
+                renderDonors(filtered);
+            }
+            
+            const viewModal = document.getElementById('donor-view-modal');
+            const viewModalBody = document.getElementById('modal-body-content');
+            const viewModalFooter = document.getElementById('modal-footer-content');
+            
+            function formatAuthority(authorityText) {
+                if (!authorityText) return 'N/A';
+                const match = authorityText.match(/(\d[\d\s-]*\d)/);
+                if (match) {
+                    const phone = match[0].replace(/\s|-/g, '');
+                    return authorityText.replace(match[0], `<a href="tel:${phone}">${match[0]}</a>`);
+                }
+                return authorityText;
+            }
+            
+            async function showDonorModal(donorId) {
+                const donor = allDonors.find(d => d.id === donorId); if (!donor) return;
+                const fullAddress = [donor.village, donor.union, donor.ward].filter(Boolean).join(', ');
+                
+                let historyHTML = `<h4 data-lang-key="donationHistoryModal">${translations[currentLang].donationHistoryModal}</h4><div id="donation-history">`;
+                try {
+                    const historySnapshot = await db.collection('donors').doc(donorId).collection('donationHistory').orderBy('date', 'desc').get();
+                    if(historySnapshot.empty) historyHTML += `<p data-lang-key="noHistoryFound">${translations[currentLang].noHistoryFound}</p>`;
+                    else {
+                        historySnapshot.forEach(doc => {
+                            const h = doc.data();
+                            const adminActions = currentUserRole === 'admin' ? 
+                                `<button class="delete-history" data-donor-id="${donorId}" data-history-id="${doc.id}"><i class="fas fa-trash"></i></button>` : '';
+                            historyHTML += `<div class="history-item">
+                                <div class="history-actions">
+                                    <button class="edit-history" data-donor-id="${donorId}" data-history-id="${doc.id}"><i class="fas fa-edit"></i></button>
+                                    ${adminActions}
+                                </div>
+                                ${h.photoUrl ? `<img src="${h.photoUrl}">`: ''}
+                                <strong>${translations[currentLang].donationDate}:</strong> ${new Date(h.date).toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-GB')}<br>
+                                <strong>${translations[currentLang].recipientLabel}:</strong> ${h.recipient}
+                            </div>`;
+                        });
+                    }
+                } catch(e){ historyHTML += `<p>Failed to load history.</p>`; }
+                historyHTML += '</div>';
+                
+                const phoneHTML = donor.phone ? `<a href="tel:${donor.phone}">${donor.phone}</a>` : 'N/A';
+                const authorityHTML = formatAuthority(donor.authority);
+
+                viewModalBody.innerHTML = `
+                    <div class="modal-header"><img src="${donor.profilePicUrl || 'https://i.ibb.co/6y4nwtN/240-F-215844325-tt-X9-U2-Uhd-A-He-Gm-I2-Psp7-UNn-Zs-U-4-Ss-8-S.jpg'}" alt="${donor.name}"><h3>${donor.name} <span style="color:var(--dark-red); font-size: 1.2rem;">(${donor.bloodGroup})</span></h3></div>
+                    <div class="modal-body">
+                        <p><strong>${translations[currentLang].phone}:</strong> ${phoneHTML}</p>
+                        <p><strong>${translations[currentLang].address}:</strong> ${fullAddress || 'N/A'}</p>
+                        <p><strong>${translations[currentLang].authority}:</strong> ${authorityHTML}</p>
+                        ${historyHTML}
+                    </div>`;
+                
+                let footerHTML = `<button class="modal-action-btn btn-add-donation" data-id="${donorId}">${translations[currentLang].addDonationBtn}</button>
+                                  <button class="modal-action-btn btn-edit" data-id="${donorId}">${translations[currentLang].editBtn}</button>`;
+
+                if (currentUserRole === 'admin') {
+                    footerHTML = `<button class="modal-action-btn btn-delete" data-id="${donorId}">${translations[currentLang].deleteBtn}</button>` + footerHTML;
+                }
+                viewModalFooter.innerHTML = footerHTML;
+
+                viewModal.style.display = 'flex';
+            }
+            
+            async function handleHistoryEdit(donorId, historyId) {
+                const doc = await db.collection('donors').doc(donorId).collection('donationHistory').doc(historyId).get();
+                if (!doc.exists) { alert('History not found.'); return; }
+                const data = doc.data();
+                const modal = document.getElementById('add-donation-modal');
+                document.getElementById('donation-modal-title').textContent = 'Edit Donation';
+                document.getElementById('add-donation-form').querySelector('.form-submit').textContent = 'Update';
+                document.getElementById('donation-donor-id').value = donorId;
+                document.getElementById('donation-history-id').value = historyId;
+                document.getElementById('donation-date').value = data.date;
+                document.getElementById('donation-recipient').value = data.recipient;
+                document.getElementById('donation-photo').value = data.photoUrl || '';
+                viewModal.style.display = 'none'; modal.style.display = 'flex';
+            }
+
+            async function handleHistoryDelete(donorId, historyId) {
+                showConfirmModal('deleteHistoryConfirm', async (confirmed) => {
+                    if (!confirmed) return;
+                    try {
+                        const batch = db.batch();
+                        const historyDocRef = db.collection('donors').doc(donorId).collection('donationHistory').doc(historyId);
+                        batch.delete(historyDocRef);
+
+                        const globalHistorySnapshot = await db.collection('donationHistoryGlobal').where('historyId', '==', historyId).get();
+                        if (!globalHistorySnapshot.empty) {
+                            batch.delete(globalHistorySnapshot.docs[0].ref);
+                        }
+                        await batch.commit();
+
+                        const remainingHistory = await db.collection('donors').doc(donorId).collection('donationHistory').orderBy('date', 'desc').limit(1).get();
+                        const newLastDonationDate = remainingHistory.empty ? null : remainingHistory.docs[0].data().date;
+                        await db.collection('donors').doc(donorId).update({ lastDonationDate: newLastDonationDate });
+
+                        const donorIndex = allDonors.findIndex(d => d.id === donorId);
+                        if (donorIndex !== -1) {
+                            allDonors[donorIndex].lastDonationDate = newLastDonationDate;
+                        }
+
+                        applyFilters(); 
+                        showDonorModal(donorId); 
+                    } catch (e) {
+                        console.error("Error deleting history:", e);
+                        alert('Error deleting history.');
+                    }
+                });
+            }
+
+            function onModalEditClick(element) {
+                const donorId = element.dataset.id;
+                const donor = allDonors.find(d => d.id === donorId); if (!donor) return;
+                document.getElementById('donor-id').value = donor.id;
+                document.getElementById('donor-name').value = donor.name || '';
+                document.getElementById('donor-phone').value = donor.phone || '';
+                document.getElementById('donor-blood-group').value = donor.bloodGroup || '';
+                document.getElementById('donor-village').value = donor.village || '';
+                document.getElementById('donor-union').value = donor.union || '';
+                document.getElementById('donor-ward').value = donor.ward || '';
+                document.getElementById('donor-authority').value = donor.authority || '';
+                document.getElementById('donor-pic-url').value = donor.profilePicUrl || '';
+                document.getElementById('donor-form-submit-btn').textContent = 'Update Information';
+                viewModal.style.display = 'none'; showSection('add-donor');
+            }
+            
+            async function onModalDeleteClick(element) {
+                if (currentUserRole !== 'admin') {
+                    alert('You do not have permission to delete this member.');
+                    return;
+                }
+                const donorId = element.dataset.id;
+                showConfirmModal('deleteMemberConfirm', async (confirmed) => {
+                    if (!confirmed) return;
+                    try {
+                        await db.collection('donors').doc(donorId).delete();
+                        alert('Member deleted successfully.');
+                        viewModal.style.display = 'none'; loadDonors();
+                    } catch(e) { alert('Error deleting member.'); }
+                });
+            }
+
+            function onModalAddDonationClick(element) {
+                const donorId = element.dataset.id;
+                const donor = allDonors.find(d => d.id === donorId);
+                document.getElementById('donation-donor-id').value = donorId;
+                document.getElementById('donation-donor-name').value = donor.name;
+                document.getElementById('donation-history-id').value = ''; 
+                document.getElementById('add-donation-form').reset();
+                document.getElementById('donation-modal-title').textContent = 'Add New Donation';
+                document.getElementById('add-donation-form').querySelector('.form-submit').textContent = 'Submit';
+                viewModal.style.display = 'none';
+                document.getElementById('add-donation-modal').style.display = 'flex';
+            }
+        
+            async function onDonorFormSubmit(e) {
+                e.preventDefault();
+                const donorId = document.getElementById('donor-id').value;
+                const donorData = { name: document.getElementById('donor-name').value, phone: document.getElementById('donor-phone').value, bloodGroup: document.getElementById('donor-blood-group').value, village: document.getElementById('donor-village').value, union: document.getElementById('donor-union').value, ward: document.getElementById('donor-ward').value, authority: document.getElementById('donor-authority').value, profilePicUrl: document.getElementById('donor-pic-url').value };
+                try {
+                    if (donorId) { await db.collection('donors').doc(donorId).update(donorData); alert('Information updated successfully!'); } 
+                    else { await db.collection('donors').add(donorData); alert('New donor added successfully!'); }
+                    e.target.reset(); document.getElementById('donor-id').value = '';
+                    document.getElementById('donor-form-submit-btn').textContent = 'Submit Information';
+                    loadDonors(); showSection('home');
+                } catch(err) { alert('An error occurred. Please try again.'); console.error(err); }
+            }
+
+            async function onAddDonationFormSubmit(e) {
+                e.preventDefault();
+                const donorId = document.getElementById('donation-donor-id').value;
+                const donorName = document.getElementById('donation-donor-name').value;
+                const historyId = document.getElementById('donation-history-id').value;
+                if(!donorId) { alert('Error: Donor ID not found.'); return; }
+                const donationDate = document.getElementById('donation-date').value;
+                const donationData = { date: donationDate, recipient: document.getElementById('donation-recipient').value, photoUrl: document.getElementById('donation-photo').value.trim(), timestamp: new Date(donationDate) };
+                const historyRef = db.collection('donors').doc(donorId).collection('donationHistory');
+                try {
+                    const globalHistoryCollection = db.collection('donationHistoryGlobal');
+                    
+                    if (historyId) { 
+                        await historyRef.doc(historyId).update(donationData);
+                        const globalHistorySnapshot = await globalHistoryCollection.where('historyId', '==', historyId).get();
+                        if (!globalHistorySnapshot.empty) {
+                            const globalDocId = globalHistorySnapshot.docs[0].id;
+                            const existingSerial = globalHistorySnapshot.docs[0].data().serial;
+                            await globalHistoryCollection.doc(globalDocId).update({ ...donationData, donorId, donorName, serial: existingSerial });
+                        }
+                        alert('History updated successfully!');
+                    } else {
+                        const countSnapshot = await globalHistoryCollection.get();
+                        const newSerial = countSnapshot.size + 1;
+                        
+                        const newHistoryDoc = await historyRef.add(donationData);
+                        await globalHistoryCollection.add({ ...donationData, donorId, donorName, historyId: newHistoryDoc.id, serial: newSerial });
+                        alert('Donation added successfully!');
+                    }
+                    
+                    const latestHistory = await historyRef.orderBy('date', 'desc').limit(1).get();
+                    const newLastDonationDate = latestHistory.empty ? null : latestHistory.docs[0].data().date;
+                    await db.collection('donors').doc(donorId).update({ lastDonationDate: newLastDonationDate });
+                    
+                    document.getElementById('add-donation-form').reset();
+                    document.getElementById('add-donation-modal').style.display = 'none';
+                    
+                    const donorIndex = allDonors.findIndex(d => d.id === donorId);
+                    if (donorIndex !== -1) allDonors[donorIndex].lastDonationDate = newLastDonationDate;
+                    
+                    applyFilters();
+                    showDonorModal(donorId);
+                } catch (err) { alert('An error occurred. Please try again.'); console.error(err); }
+            }
+
+            function loadInitialData() {
+                populateDropdowns(); populateBloodGroupFilters();
+                loadDonors(); loadNotices('notice-list');
+                populateHistoryFilters(); setupRealtimeListeners();
+                checkForUpdates();
+            }
+
+            function populateDropdowns() {
+                const options = `<option value="">${currentLang === 'bn' ? 'রক্তের গ্রুপ' : 'Blood Group'}</option>` + bloodGroups.map(bg => `<option value="${bg}">${bg}</option>`).join('');
+                document.getElementById('donor-blood-group').innerHTML = options;
+                document.querySelectorAll('select[id^="req-blood-group"]').forEach(select => select.innerHTML = options);
+            }
+            
+            function populateBloodGroupFilters() {
+                const filterContainer = document.getElementById('blood-group-filter');
+                if (!filterContainer) return;
+                filterContainer.innerHTML = `<button class="blood-group-btn active" data-group="all">All</button>` + bloodGroups.map(bg => `<button class="blood-group-btn" data-group="${bg}">${bg}</button>`).join('');
+                filterContainer.querySelectorAll('.blood-group-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.blood-group-btn').forEach(b => b.classList.remove('active')); this.classList.add('active');
+                        applyFilters();
+                    });
+                });
+            }
+
+             function populateSearchFilters() {
+                const filtersContainer = document.getElementById('search-filters');
+                if (!filtersContainer) return;
+
+                const createSelect = (id, options, defaultKey) => {
+                    let html = `<select id="${id}" class="form-group"><option value="">${translations[currentLang][defaultKey]}</option>`;
+                    [...new Set(options.map(item => item ? item.split('-')[0].trim() : item))].filter(Boolean).sort().forEach(opt => html += `<option value="${opt}">${opt}</option>`);
+                    html += `</select>`;
+                    return html;
+                };
+
+                filtersContainer.innerHTML = 
+                    createSelect('filter-village', allDonors.map(d => d.village), 'allVillages') +
+                    createSelect('filter-union', allDonors.map(d => d.union), 'allUnions') +
+                    createSelect('filter-ward', allDonors.map(d => d.ward), 'allWards') +
+                    createSelect('filter-authority', allDonors.map(d => d.authority), 'allAuthorities');
+
+                filtersContainer.querySelectorAll('select').forEach(sel => sel.addEventListener('change', applyFilters));
+            }
+
+
+            function addNavListeners() {
+                document.querySelectorAll('.nav-icon').forEach(icon => icon.addEventListener('click', () => showSection(icon.dataset.section)));
+            }
+
+            function getYoutubeEmbedUrl(url) {
+                let videoId;
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = url.match(regExp);
+                if (match && match[2].length === 11) {
+                    videoId = match[2];
+                    return `https://www.youtube.com/embed/${videoId}`;
+                }
+                return null;
+            }
+
+            async function loadNotices(targetElementId) {
+                const noticeList = document.getElementById(targetElementId);
+                if(!noticeList) return;
+                noticeList.innerHTML = ''; 
+
+                const snapshot = await db.collection('notices').orderBy('timestamp', 'desc').get();
+                if (snapshot.empty) { noticeList.innerHTML = `<p>${translations[currentLang].noNotices || 'No notices yet.'}</p>`; return; }
+                let noticeHTML = '';
+                snapshot.forEach(doc => {
+                    const n = doc.data();
+                    const adminActions = (currentUserRole === 'admin' && targetElementId === 'notice-list') ? `
+                        <div class="notice-actions">
+                            <button class="edit-notice" data-id="${doc.id}"><i class="fas fa-edit"></i></button>
+                            <button class="delete-notice" data-id="${doc.id}"><i class="fas fa-trash"></i></button>
+                        </div>` : '';
+
+                    let mediaHTML = '';
+                    const embedUrl = n.mediaUrl ? getYoutubeEmbedUrl(n.mediaUrl) : null;
+                    if (embedUrl) {
+                        mediaHTML = `<div class="media-content"><iframe src="${embedUrl}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>`;
+                    } else if (n.mediaUrl) {
+                        mediaHTML = `<div class="media-content"><img src="${n.mediaUrl}" alt="${n.title}"></div>`;
+                    }
+                    
+                    if (mediaHTML && n.targetUrl) {
+                        mediaHTML = `<a href="${n.targetUrl}" target="_blank">${mediaHTML}</a>`;
+                    }
+
+                    const targetLinkHTML = n.targetUrl ? `<a href="${n.targetUrl}" target="_blank" class="product-link">${translations[currentLang].learnMore || 'Learn More'}</a>` : '';
+
+                    noticeHTML += `<div class="notice-item">${adminActions}<h4>${n.title}</h4><p class="date">${new Date(n.timestamp.toDate()).toLocaleString(currentLang === 'bn' ? 'bn-BD' : 'en-GB')}</p><p>${n.content}</p>${mediaHTML}${targetLinkHTML}</div>`;
+                });
+                noticeList.innerHTML = noticeHTML;
+            }
+
+            async function handleNoticeEdit(noticeId) {
+                const doc = await db.collection('notices').doc(noticeId).get();
+                if (!doc.exists) { alert('Notice not found.'); return; }
+                const data = doc.data();
+                document.getElementById('notice-form-title').textContent = 'Edit Notice';
+                document.getElementById('add-notice-form').querySelector('.form-submit').textContent = 'Update';
+                document.getElementById('notice-id').value = noticeId;
+                document.getElementById('notice-title').value = data.title;
+                document.getElementById('notice-content').value = data.content;
+                document.getElementById('notice-media-url').value = data.mediaUrl || '';
+                document.getElementById('notice-target-url').value = data.targetUrl || '';
+                document.getElementById('notice-board').scrollIntoView({ behavior: 'smooth' });
+            }
+
+            async function handleNoticeDelete(noticeId) {
+                showConfirmModal('deleteNoticeConfirm', async (confirmed) => {
+                    if (confirmed) {
+                        await db.collection('notices').doc(noticeId).delete();
+                        alert('Notice deleted.'); loadNotices('notice-list');
+                    }
+                });
+            }
+            async function onNoticeFormSubmit(e) {
+                e.preventDefault();
+                const noticeId = document.getElementById('notice-id').value;
+                const noticeData = { title: document.getElementById('notice-title').value, content: document.getElementById('notice-content').value, mediaUrl: document.getElementById('notice-media-url').value, targetUrl: document.getElementById('notice-target-url').value, timestamp: firebase.firestore.FieldValue.serverTimestamp() };
+                if(noticeId){ await db.collection('notices').doc(noticeId).update(noticeData); alert('Notice updated!'); } 
+                else { await db.collection('notices').add(noticeData); alert('Notice published!'); }
+                e.target.reset();
+                document.getElementById('notice-id').value = '';
+                document.getElementById('notice-form-title').textContent = 'Add New Notice';
+                document.getElementById('add-notice-form').querySelector('.form-submit').textContent = 'Publish';
+                loadNotices('notice-list');
+            }
+
+            async function loadSponsors(targetElementId) {
+                const listContainer = document.getElementById(targetElementId);
+                if(!listContainer) return;
+
+                if(targetElementId === 'request-page-sponsor-list'){
+                    listContainer.innerHTML = `<h2 class="section-title" data-lang-key="ourSponsors">${translations[currentLang].ourSponsors}</h2>`;
+                } else {
+                    listContainer.innerHTML = '';
+                }
+
+                const snapshot = await db.collection('sponsors').get();
+                if (snapshot.empty) { listContainer.innerHTML += `<p>${translations[currentLang].noSponsors || 'No sponsors added yet.'}</p>`; return; }
+                let sponsorHTML = snapshot.docs.map(doc => {
+                    const s = doc.data();
+                    const adminActions = (currentUserRole === 'admin' && targetElementId === 'notice-page-sponsor-list') ? `<div class="sponsor-actions"><button class="delete-sponsor" data-id="${doc.id}"><i class="fas fa-trash"></i></button></div>` : '';
+                    return `<div class="sponsor-item">
+                        <a href="${s.targetUrl}" target="_blank"><img src="${s.imageUrl}" alt="Sponsor"></a>
+                        ${adminActions}
+                    </div>`;
+                }).join('');
+                listContainer.innerHTML += `<div class="sponsor-grid-container">${sponsorHTML}</div>`;
+            }
+            
+            async function onSponsorFormSubmit(e) {
+                e.preventDefault();
+                const sponsorData = { imageUrl: document.getElementById('sponsor-image-url').value, targetUrl: document.getElementById('sponsor-target-url').value };
+                await db.collection('sponsors').add(sponsorData);
+                alert('Sponsor added!');
+                e.target.reset();
+                loadSponsors('notice-page-sponsor-list');
+            }
+
+            async function handleSponsorDelete(id) {
+                showConfirmModal('deleteSponsorConfirm', async (confirmed) => {
+                    if(confirmed) {
+                        await db.collection('sponsors').doc(id).delete();
+                        alert('Sponsor deleted.');
+                        loadSponsors('notice-page-sponsor-list');
+                    }
+                });
+            }
+
+            function populateHistoryFilters() {
+                const yearFilter = document.getElementById('history-year-filter');
+                const monthFilter = document.getElementById('history-month-filter');
+                const currentYear = new Date().getFullYear();
+                let yearOptions = '';
+                for (let y = currentYear; y >= 2020; y--) { yearOptions += `<option value="${y}">${y}</option>`; }
+                yearFilter.innerHTML = yearOptions;
+                
+                const months_bn = ["জানুয়ারি", "ফেব্রুয়ারি", "মার্চ", "এপ্রিল", "মে", "জুন", "জুলাই", "আগস্ট", "সেপ্টেম্বর", "অক্টোবর", "নভেম্বর", "ডিসেম্বর"];
+                const months_en = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+                const months = currentLang === 'bn' ? months_bn : months_en;
+
+                let monthOptions = `<option value="">${currentLang === 'bn' ? 'সব মাস' : 'All Months'}</option>`;
+                months.forEach((m, i) => { monthOptions += `<option value="${i}">${m}</option>`; });
+                monthFilter.innerHTML = monthOptions;
+            }
+
+            async function loadGlobalHistory() {
+                const year = document.getElementById('history-year-filter').value;
+                const month = document.getElementById('history-month-filter').value;
+                const list = document.getElementById('history-list');
+                const totalDiv = document.getElementById('history-total');
+                list.innerHTML = translations[currentLang].loading || 'Loading...';
+                
+                try {
+                    let query = db.collection('donationHistoryGlobal');
+                    if (month) { 
+                        const startDate = new Date(year, month, 1);
+                        const endDate = new Date(year, parseInt(month) + 1, 1);
+                        query = query.where('timestamp', '>=', startDate).where('timestamp', '<', endDate);
+                    } else {
+                        const startDate = new Date(year, 0, 1);
+                        const endDate = new Date(parseInt(year) + 1, 0, 1);
+                        query = query.where('timestamp', '>=', startDate).where('timestamp', '<', endDate);
+                    }
+                    
+                    const snapshot = await query.orderBy('timestamp', 'desc').get();
+
+                    totalDiv.textContent = `${translations[currentLang].totalDonations}: ${snapshot.size}`;
+                    if (snapshot.empty) { list.innerHTML = `<p>${translations[currentLang].noHistoryPeriod || 'No donation history for this period.'}</p>`; return; }
+                    
+                    list.innerHTML = snapshot.docs.map(doc => {
+                        const h = doc.data();
+                        const adminActions = currentUserRole === 'admin' ? 
+                            `<div class="actions">
+                                <button onclick="deleteGlobalHistoryEntry('${doc.id}', '${h.donorId}', '${h.historyId}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                             </div>` : '';
+                             
+                        return `<div class="history-entry">
+                            <div class="serial-number">${h.serial || 'N/A'}</div>
+                            <div class="details">
+                                <p><strong>${translations[currentLang].navDonors}:</strong> ${h.donorName}</p>
+                                <p><strong>${translations[currentLang].recipientLabel}:</strong> ${h.recipient}</p>
+                                <p><strong>${translations[currentLang].donationDate}:</strong> ${new Date(h.date).toLocaleDateString(currentLang === 'bn' ? 'bn-BD' : 'en-GB')}</p>
+                                ${h.photoUrl ? `<img src="${h.photoUrl}" style="max-width:100px; border-radius:5px; margin-top:5px;">` : ''}
+                            </div>
+                            ${adminActions}
+                        </div>`;
+                    }).join('');
+                } catch(e) {
+                    console.error("Error loading history: ", e);
+                    list.innerHTML = `<p style="color:red">Failed to load history. Please check Firebase indexes.</p>`;
+                }
+            }
+
+            window.deleteGlobalHistoryEntry = async (globalDocId, donorId, historyId) => {
+                showConfirmModal('deleteHistoryConfirm', async (confirmed) => {
+                    if (!confirmed) return;
+                    try {
+                        const batch = db.batch();
+                        batch.delete(db.collection('donationHistoryGlobal').doc(globalDocId));
+                        batch.delete(db.collection('donors').doc(donorId).collection('donationHistory').doc(historyId));
+                        await batch.commit();
+                        
+                        const remainingHistory = await db.collection('donors').doc(donorId).collection('donationHistory').orderBy('date', 'desc').limit(1).get();
+                        const newLastDonationDate = remainingHistory.empty ? null : remainingHistory.docs[0].data().date;
+                        await db.collection('donors').doc(donorId).update({ lastDonationDate: newLastDonationDate });
+                        
+                        const donorIndex = allDonors.findIndex(d => d.id === donorId);
+                        if (donorIndex !== -1) allDonors[donorIndex].lastDonationDate = newLastDonationDate;
+                        applyFilters();
+                        loadGlobalHistory();
+                    } catch (e) {
+                        console.error("Error deleting history entry: ", e);
+                        alert("Error deleting history.");
+                    }
+                });
+            }
+
+            async function onBloodRequestFormSubmit(e) { 
+                const form = e.target;
+                const requestData = { bloodGroup: form.querySelector('select[id^="req-blood-group"]').value, hospitalName: form.querySelector('input[id^="req-hospital-name"]').value, roomNumber: form.querySelector('input[id^="req-room-number"]').value, patientName: form.querySelector('input[id^="req-patient-name"]').value, patientPhone: form.querySelector('input[id^="req-patient-phone"]').value, status: 'pending', timestamp: firebase.firestore.FieldValue.serverTimestamp() };
+                
+                await db.collection('bloodRequests').add(requestData);
+                
+                showRequestSuccessPrompt();
+                form.reset();
+
+                document.getElementById('blood-request-form-container').style.display = 'none'; 
+                document.getElementById('show-request-form-btn').style.display = 'block'; 
+            }
+            
+            function setupRealtimeListeners() {
+                db.collection('bloodRequests').where('status', '==', 'pending')
+                  .onSnapshot(snapshot => {
+                      const count = snapshot.size;
+                      const badge = document.getElementById('notification-count');
+                      if (badge) { badge.textContent = count; badge.style.display = count > 0 ? 'flex' : 'none'; }
+                      const list = document.getElementById('pending-requests-container');
+                      if(!list || currentUserRole === 'guest') return;
+                      
+                      const title = `<h3 class="section-title">${translations[currentLang].pendingRequests}</h3>`;
+                      if(snapshot.empty){ 
+                          list.innerHTML = title + `<p>${translations[currentLang].noPendingRequests}</p>`; 
+                          return; 
+                      }
+                      list.innerHTML = title + snapshot.docs.map(doc => {
+                          const req = doc.data();
+                          return `<div class="admin-contact-item" style="cursor:default;"> 
+                              <div class="info">
+                                  <h4>${req.patientName} (${req.bloodGroup})</h4>
+                                  <span>${req.hospitalName}, Room: ${req.roomNumber}</span>
+                                  <br><strong>Contact: ${req.patientPhone}</strong>
+                              </div>
+                              <div class="request-item-actions">
+                                  <button class="form-submit" style="background-color: var(--green);" onclick="showCompleteRequestModal('${doc.id}')">${currentLang === 'bn' ? 'সম্পন্ন' : 'Done'}</button>
+                                  <button class="form-submit" onclick="deleteRequest('${doc.id}')">${currentLang === 'bn' ? 'ডিলিট' : 'Delete'}</button>
+                              </div>
+                          </div>`;
+                      }).join('');
+                  });
+            }
+
+            async function checkForUpdates() {
+                try {
+                    const doc = await db.collection('appInfo').doc('version').get();
+                    if (doc.exists) {
+                        const data = doc.data();
+                        if (data.latestVersion && data.latestVersion > currentAppVersion) {
+                            document.getElementById('update-banner').style.display = 'block';
+                            document.getElementById('update-message').textContent = data.message || 'A new version is available.';
+                            document.getElementById('update-link').href = data.url || '#';
+                        }
+                    }
+                } catch (e) { console.error("Update check failed:", e); }
+            }
+            
+            window.showCompleteRequestModal = (docId) => {
+                document.getElementById('request-id-to-complete').value = docId;
+                document.getElementById('donation-serial-number').value = '';
+                document.getElementById('complete-request-modal').style.display = 'flex';
+            }
+
+            async function onCompleteRequestSubmit() {
+                const docId = document.getElementById('request-id-to-complete').value;
+                const serialInput = document.getElementById('donation-serial-number').value;
+                if (!serialInput) {
+                    alert(translations[currentLang].invalidSerial);
+                    return;
+                }
+                const serial = parseInt(serialInput);
+                 if (isNaN(serial)) {
+                    alert(translations[currentLang].invalidSerial);
+                    return;
+                }
+                
+                const historyQuery = await db.collection('donationHistoryGlobal').where('serial', '==', serial).limit(1).get();
+
+                if (historyQuery.empty) {
+                    alert(translations[currentLang].invalidSerial);
+                    return;
+                }
+                
+                await db.collection('bloodRequests').doc(docId).update({ status: 'completed', donationSerial: serial });
+                document.getElementById('complete-request-modal').style.display = 'none';
+            }
+
+            window.deleteRequest = (docId) => {
+                showConfirmModal('deleteRequestConfirm', async (confirmed) => {
+                    if (confirmed) {
+                        await db.collection('bloodRequests').doc(docId).delete();
+                    }
+                });
+            }
+
+            // Admin Panel User Management
+            async function loadAdminUsers() {
+                 if (currentUserRole !== 'admin') return;
+                const userListContainer = document.getElementById('user-list');
+                userListContainer.innerHTML = 'Loading...';
+
+                const snapshot = await db.collection('users').orderBy('sortOrder').get();
+                allAdminUsers = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+                userListContainer.innerHTML = allAdminUsers.map(user => {
+                    return `<div class="user-item">
+                        <img src="${user.photoUrl || 'https://i.ibb.co/6y4nwtN/240-F-215844325-tt-X9-U2-Uhd-A-He-Gm-I2-Psp7-UNn-Zs-U-4-Ss-8-S.jpg'}" alt="${user.name}">
+                        <div class="info">
+                            <h4>${user.name}</h4>
+                            <span>${user.designation || 'N/A'}</span>
+                        </div>
+                        <div class="actions">
+                            <button onclick="handleUserEdit('${user.id}')"><i class="fas fa-edit"></i></button>
+                            <button onclick="handleUserDelete('${user.id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
+
+            function showUserManagementModal(userId = null) {
+                const modal = document.getElementById('user-management-modal');
+                const form = document.getElementById('user-management-form');
+                const title = document.getElementById('user-modal-title');
+                form.reset();
+                document.getElementById('user-id').value = userId || '';
+
+                if (userId) {
+                    const user = allAdminUsers.find(u => u.id === userId);
+                    title.textContent = translations[currentLang].editOfficial;
+                    document.getElementById('user-name').value = user.name;
+                    document.getElementById('user-designation').value = user.designation || '';
+                    document.getElementById('user-phone').value = user.phone || '';
+                    document.getElementById('user-email').value = user.email || '';
+                    document.getElementById('user-photo-url').value = user.photoUrl || '';
+                    document.getElementById('user-sort-order').value = user.sortOrder || 99;
+                } else {
+                    title.textContent = translations[currentLang].addNewOfficial;
+                }
+                modal.style.display = 'flex';
+                setLanguage(currentLang);
+            }
+            
+            window.handleUserEdit = (userId) => {
+                showUserManagementModal(userId);
+            }
+
+            window.handleUserDelete = (userId) => {
+                 const user = allAdminUsers.find(u => u.id === userId);
+                 if (user.role === 'admin') {
+                     alert("Cannot delete the main admin.");
+                     return;
+                 }
+                showConfirmModal('deleteUserConfirm', async (confirmed) => {
+                    if (confirmed) {
+                        await db.collection('users').doc(userId).delete();
+                        alert('Official deleted.');
+                        loadAdminUsers();
+                    }
+                });
+            }
+
+            async function onUserManagementFormSubmit() {
+                const userId = document.getElementById('user-id').value;
+                const userData = {
+                    name: document.getElementById('user-name').value,
+                    designation: document.getElementById('user-designation').value,
+                    phone: document.getElementById('user-phone').value,
+                    email: document.getElementById('user-email').value,
+                    photoUrl: document.getElementById('user-photo-url').value,
+                    sortOrder: parseInt(document.getElementById('user-sort-order').value) || 99
+                };
+
+                try {
+                    if (userId) {
+                        await db.collection('users').doc(userId).update(userData);
+                        alert("Official's info updated successfully.");
+                    } else {
+                        await db.collection('users').add({...userData, role: 'sub-admin'});
+                        alert("New official added successfully. Remember to create their login in Firebase Authentication.");
+                    }
+                    document.getElementById('user-management-modal').style.display = 'none';
+                    loadAdminUsers();
+                } catch (e) {
+                    console.error("Error saving user data: ", e);
+                    alert("An error occurred.");
+                }
+            }
+        });
+    </script>
+</body>
+</html>
