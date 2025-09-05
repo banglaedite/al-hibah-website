@@ -34,6 +34,17 @@
         #admin-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         #admin-panel-header .section-title { margin-bottom: 0; border: none; }
     </style>
+
+<script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+<script>
+  window.OneSignalDeferred = window.OneSignalDeferred || [];
+  OneSignalDeferred.push(async function(OneSignal) {
+    await OneSignal.init({
+      appId: "785c141a-dd30-455a-be4c-97e655c4a4b9",
+    });
+  });
+</script>
+    
 </head>
 <body>
     <div id="login-page"></div>
